@@ -7,11 +7,34 @@ const { sign } = jwt;
 export const register = async (req, res) => {
   try {
     const { name, email, password, role } = req.body;
-    const hashedPassword = await pkg.hash(password, 10);
 
-    const user = await User.create({ name, email, password: hashedPassword, role });
+    if (!name || !email || !password || !role) {
+      return res.status(400).json({ error: "Todos os campos são obrigatórios" });
+    }
 
-    res.status(201).json({ message: "Usuário registrado com sucesso" });
+    const existingUser = await User.findOne({ where: { email } });
+
+    if (existingUser) {
+      return res.status(400).json({ error: "E-mail já registrado" });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const user = await User.create({
+      name,
+      email,
+      password: hashedPassword,
+      role,
+    });
+
+    res.status(201).json({
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      message: "Usuário registrado com sucesso",
+    });
+
   } catch (error) {
     res.status(500).json({ error: "Erro ao registrar usuário" });
   }
