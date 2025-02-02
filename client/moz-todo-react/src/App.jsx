@@ -1,28 +1,56 @@
 import { Routes, Route, Navigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 import Login from "./pages/Login.jsx";
 import Register from "./pages/Register.jsx";
-import Dashboard from "./pages/Dashboard/Dashboard.jsx";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
+import SupplierDashboard from "./pages/SupplierDashboard/SupplierDashboard.jsx";
+import CustomerDashboard from "./pages/CustomerDashboard/CustomerDashboard.jsx";
 
 function App() {
+  const [token, setToken] = useState(localStorage.getItem("token"));
+  const [role, setRole] = useState(localStorage.getItem("role"));
+
+  useEffect(() => {
+    const updateAuthState = () => {
+      setToken(localStorage.getItem("token"));
+      setRole(localStorage.getItem("role"));
+    };
+
+    window.addEventListener("storage", updateAuthState);
+    return () => window.removeEventListener("storage", updateAuthState);
+  }, []);
+
   return (
     <Routes>
-      {/* Se o usuário acessar `/`, ele será redirecionado para `/register` */}
       <Route path="/" element={<Navigate to="/register" />} />
 
-      {/* Redireciona usuários logados para o dashboard */}
       <Route
         path="/login"
-        element={localStorage.getItem("token") ? <Navigate to="/dashboard" /> : <Login />}
+        element={
+          token
+            ? role === "fornecedor"
+              ? <Navigate to="/supplier-dashboard" />
+              : <Navigate to="/customer-dashboard" />
+            : <Login />
+        }
       />
       <Route
         path="/register"
-        element={localStorage.getItem("token") ? <Navigate to="/dashboard" /> : <Register />}
+        element={
+          token
+            ? role === "fornecedor"
+              ? <Navigate to="/supplier-dashboard" />
+              : <Navigate to="/customer-dashboard" />
+            : <Register />
+        }
       />
 
-      {/* Rotas protegidas: Apenas usuários logados podem acessar */}
-      <Route element={<ProtectedRoute />}>
-        <Route path="/dashboard" element={<Dashboard />} />
+      <Route element={<ProtectedRoute role="fornecedor" />}>
+        <Route path="/supplier-dashboard" element={<SupplierDashboard />} />
+      </Route>
+
+      <Route element={<ProtectedRoute role="cliente" />}>
+        <Route path="/customer-dashboard" element={<CustomerDashboard />} />
       </Route>
     </Routes>
   );

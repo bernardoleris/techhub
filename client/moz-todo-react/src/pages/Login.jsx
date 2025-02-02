@@ -25,25 +25,35 @@ const Login = () => {
     e.preventDefault();
     setError("");
     setSuccess("");
-
+  
     try {
       const data = await loginUser(formData);
-
-      if (!data.token) {
-        throw new Error("Erro ao obter token de autenticação.");
+  
+      if (!data.token || !data.user || !data.user.role) {
+        throw new Error("Erro ao obter autenticação.");
       }
-
+  
       localStorage.setItem("token", data.token);
-
+      localStorage.setItem("role", data.user.role);
+  
+      console.log("Role salvo no localStorage:", localStorage.getItem("role")); 
+  
       setSuccess("Login realizado com sucesso!");
-
+  
       setTimeout(() => {
-        navigate("/dashboard");
+        if (data.user.role === "fornecedor") {
+          navigate("/supplier-dashboard");
+        } else {
+          navigate("/customer-dashboard");
+        }
       }, 1000);
+  
     } catch (err) {
+      console.error("Erro no login:", err);
       setError(err.message);
     }
   };
+  
 
   return (
     <div className="login-big-container">
