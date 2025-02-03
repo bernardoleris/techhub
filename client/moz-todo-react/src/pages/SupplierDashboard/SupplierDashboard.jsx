@@ -24,7 +24,7 @@ const SupplierDashboard = () => {
         const data = await response.json();
         if (!response.ok) throw new Error(data.error || "Erro ao buscar produtos");
 
-        setProducts(data); 
+        setProducts(data);
       } catch (err) {
         console.error("Erro ao buscar produtos:", err);
       }
@@ -75,9 +75,23 @@ const SupplierDashboard = () => {
     }
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem("token"); 
+    localStorage.removeItem("userId"); 
+    localStorage.removeItem("role"); 
+    navigate("/login"); 
+  };
+
   return (
     <Box sx={{ width: "80%", margin: "auto", textAlign: "center", mt: 4 }}>
-      <h1>Supplier Dashboard</h1>
+      <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <div className="techhub-logo">TechHub.</div>
+        <Button onClick={handleLogout} variant="contained" color="error">
+          Sair
+        </Button>
+      </Box>
+
+      <h1>Painel do Fornecedor</h1>
       <CustomButton onClick={handleOpen}>Adicionar Produto</CustomButton>
 
       <TableContainer component={Paper} sx={{ mt: 4 }}>

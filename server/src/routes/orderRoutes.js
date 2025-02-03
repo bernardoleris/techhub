@@ -1,10 +1,12 @@
 import { Router } from "express";
-import orderController from "../controllers/orderController.js";
-import { verifyToken, isCliente } from "../middlewares/authMiddleware.js";
+import { createOrder, getOrdersByUser, updateOrderStatus, cancelOrder } from "../controllers/orderController.js";
+import { verifyToken } from "../middlewares/authMiddleware.js";
 
 const router = Router();
 
-router.post("/", verifyToken, isCliente, orderController.createOrder);
-router.get("/:userId", verifyToken, orderController.getOrdersByUser);
+router.post("/", verifyToken, createOrder);
+router.get("/user/:userId", verifyToken, getOrdersByUser);
+router.patch("/:orderId", verifyToken, updateOrderStatus);
+router.delete("/:orderId", verifyToken, cancelOrder); 
 
 export default router;

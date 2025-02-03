@@ -3,7 +3,6 @@ import Product from "./Product.js";
 import Order from "./Order.js";
 import OrderItem from "./OrderItem.js";
 
-// Relacionamentos
 Order.belongsTo(User, { foreignKey: "userId" });
 Order.hasMany(OrderItem, { foreignKey: "orderId" });
 

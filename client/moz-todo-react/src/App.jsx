@@ -1,7 +1,7 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import Login from "./pages/Login.jsx";
-import Register from "./pages/Register.jsx";
+import Login from "./pages/Login/Login.jsx";
+import Register from "./pages/Register/Register.jsx";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
 import SupplierDashboard from "./pages/SupplierDashboard/SupplierDashboard.jsx";
 import CustomerDashboard from "./pages/CustomerDashboard/CustomerDashboard.jsx";

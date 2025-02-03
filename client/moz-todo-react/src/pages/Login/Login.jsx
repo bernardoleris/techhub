@@ -1,10 +1,10 @@
 import { useState } from "react";
 import Box from "@mui/material/Box";
-import CustomTextField from "../components/CustomTextField"; 
-import CustomButton from "../components/CustomButton";
+import CustomTextField from "../../components/CustomTextField.jsx"; 
+import CustomButton from "../../components/CustomButton.jsx";
 import { Link, useNavigate } from "react-router-dom"; 
-import { loginUser } from "../services/userService.js"; 
-import "../styles/Login.css"; 
+import { loginUser } from "../../services/userService.js"; 
+import "./Login.css"; 
 
 const Login = () => {
   const [formData, setFormData] = useState({

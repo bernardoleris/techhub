@@ -1,7 +1,7 @@
 import dotenv from "dotenv";
 import express, { json } from "express";
 import cors from "cors";
-import sequelize from "./config/database.js";
+import { sequelize } from "./config/database.js";
 import userRoutes from "./routes/userRoutes.js";
 import productRoutes from "./routes/productRoutes.js";
 import orderRoutes from "./routes/orderRoutes.js";

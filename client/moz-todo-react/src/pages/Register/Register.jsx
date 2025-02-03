@@ -1,11 +1,11 @@
 import { useState } from "react";
 import Box from "@mui/material/Box";
-import CustomTextField from "../components/CustomTextField"; 
-import CustomButton from "../components/CustomButton";
+import CustomTextField from "../../components/CustomTextField.jsx"; 
+import CustomButton from "../../components/CustomButton.jsx";
 import MenuItem from "@mui/material/MenuItem";
 import { Link } from "react-router-dom"; 
-import "../styles/Register.css";
-import { registerUser } from "../services/userService.js";
+import "./Register.css";
+import { registerUser } from "../../services/userService.js";
 
 const Register = () => {
   const [formData, setFormData] = useState({
