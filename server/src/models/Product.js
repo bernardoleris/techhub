@@ -7,6 +7,7 @@ const Product = sequelize.define("Product", {
   price: { type: DataTypes.FLOAT, allowNull: false },
   stock: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 0 },
   supplierId: { type: DataTypes.INTEGER, allowNull: false },
+  isActive: { type: DataTypes.BOOLEAN, defaultValue: true },
 });
 
 export default Product;

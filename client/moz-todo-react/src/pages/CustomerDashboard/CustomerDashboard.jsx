@@ -21,26 +21,46 @@ const CustomerDashboard = () => {
 
   const fetchProducts = async () => {
     try {
-      const response = await fetch("http://localhost:5000/api/products");
+      const token = localStorage.getItem("token");
+      if (!token) {
+        console.error("Usuário não autenticado.");
+        navigate("/login");
+        return;
+      }
+
+      const response = await fetch("http://localhost:5000/api/products", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+
       const data = await response.json();
-      setProducts(data);
+      if (!response.ok) throw new Error(data.message || "Erro ao buscar produtos");
+      
+      setProducts(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error("Erro ao buscar produtos:", error);
+      setProducts([]);
     }
   };
 
   const fetchOrders = async () => {
     try {
+      const token = localStorage.getItem("token");
+      if (!token) return;
+
       const response = await fetch(`http://localhost:5000/api/orders/user/${localStorage.getItem("userId")}`, {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
       });
 
       const data = await response.json();
       if (!response.ok) throw new Error(data.message || "Erro ao buscar pedidos");
-      setOrders(data);
+      
+      setOrders(Array.isArray(data) ? data.reverse() : []);
     } catch (error) {
       console.error("Erro ao buscar pedidos:", error);
     }
@@ -48,6 +68,8 @@ const CustomerDashboard = () => {
 
   const handleAddToCart = (product) => {
     setErrorMessage("");
+    const existingItem = cart.find((item) => item.id === product.id);
+    if (existingItem) return; 
     setCart([...cart, { ...product, quantity: 1 }]);
   };
 
@@ -57,10 +79,11 @@ const CustomerDashboard = () => {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem("token"); 
-    localStorage.removeItem("userId"); 
-    localStorage.removeItem("role"); 
-    navigate("/login");
+    localStorage.clear();
+    setTimeout(() => {
+      navigate("/login");
+      window.location.reload();
+    }, 100);
   };
 
   const handleFinalizeOrder = async () => {
@@ -88,10 +111,7 @@ const CustomerDashboard = () => {
       if (!response.ok) {
         if (response.status === 401) {
           alert("Sessão expirada. Faça login novamente.");
-          localStorage.removeItem("token");
-          localStorage.removeItem("userId");
-          localStorage.removeItem("role");
-          navigate("/login");
+          handleLogout();
         } else if (response.status === 400 && data.message.includes("estoque insuficiente")) {
           setErrorMessage(data.message);
         } else {
@@ -100,120 +120,122 @@ const CustomerDashboard = () => {
         return;
       }
 
-      setSuccessMessage("Pedido finalizado com sucesso!");
+      setSuccessMessage("Compra realizada com sucesso!");
       setCart([]);
-      fetchOrders(); 
+      fetchOrders();
     } catch (err) {
       console.error("Erro ao finalizar pedido:", err);
     }
   };
 
   return (
-    <div className="customer-dashboard-wrapper">
-      <Box className="customer-dashboard-container">
-        <Box className="customer-header">
-          <div className="techhub-logo">TechHub.</div>
-          <Button onClick={handleLogout} variant="contained" color="error">
-            Sair
-          </Button>
-        </Box>
+    <div className="customer-all-dashboard">
+      <div className="customer-dashboard-wrapper">
+        <Box className="customer-dashboard-container">
+          <Box className="customer-header">
+            <div className="techhub-logo">TechHub.</div>
+            <Button onClick={handleLogout} variant="contained" color="error">
+              Sair
+            </Button>
+          </Box>
 
-        <h1>Painel do Cliente</h1>
+          <h1>Painel do Cliente</h1>
 
-        <Box sx={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: 2 }}>
-          {products.length === 0 ? (
-            <Typography variant="h6">Nenhum produto disponível no momento</Typography>
-          ) : (
-            products.map((product) => (
-              <Card key={product.id} className="product-card">
-                <CardContent>
-                  <Typography variant="h6"><strong>{product.name}</strong></Typography>
-                  <Typography>Preço: R$ {product.price}</Typography>
-                  <Button className="add-product-button" variant="contained" onClick={() => handleAddToCart(product)}>
-                    Adicionar ao Pedido
-                  </Button>
-                </CardContent>
-              </Card>
-            ))
-          )}
-        </Box>
+          <Box sx={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: 2 }}>
+            {products.length === 0 ? (
+              <Typography variant="h6">Nenhum produto disponível no momento</Typography>
+            ) : (
+              products.map((product) => (
+                <Card key={product.id} className="product-card">
+                  <CardContent>
+                    <Typography variant="h6"><strong>{product.name}</strong></Typography>
+                    <Typography>Preço: R$ {product.price}</Typography>
+                    <Button className="add-product-button" variant="contained" onClick={() => handleAddToCart(product)}>
+                      Adicionar ao Pedido
+                    </Button>
+                  </CardContent>
+                </Card>
+              ))
+            )}
+          </Box>
 
-        <Box className="order-summary">
-          <h2>Resumo do Pedido</h2>
+          <Box className="order-summary">
+            <h2>Resumo do Pedido</h2>
 
-          {cart.length === 0 ? (
-            <Typography variant="body1">Seu carrinho está vazio</Typography>
-          ) : (
-            cart.map((item, index) => (
-              <Box key={index} className="order-item">
-                <Typography><strong>{item.name}</strong> - R$ {item.price}</Typography>
-                <div className="cart-controls">
-                  <Select
-                    className="order-select"
-                    value={item.quantity}
-                    onChange={(e) => {
-                      const updatedCart = [...cart];
-                      updatedCart[index].quantity = e.target.value;
-                      setCart(updatedCart);
-                    }}
-                  >
-                    {[1, 2, 3, 4, 5].map((q) => (
-                      <MenuItem key={q} value={q}>{q}</MenuItem>
-                    ))}
-                  </Select>
+            {cart.length === 0 ? (
+              <Typography variant="body1">Seu carrinho está vazio</Typography>
+            ) : (
+              cart.map((item, index) => (
+                <Box key={index} className="order-item">
+                  <Typography><strong>{item.name}</strong> - R$ {item.price}</Typography>
+                  <div className="cart-controls">
+                    <Select
+                      className="order-select"
+                      value={item.quantity}
+                      onChange={(e) => {
+                        const updatedCart = [...cart];
+                        updatedCart[index].quantity = e.target.value;
+                        setCart(updatedCart);
+                      }}
+                    >
+                      {[1, 2, 3, 4, 5].map((q) => (
+                        <MenuItem key={q} value={q}>{q}</MenuItem>
+                      ))}
+                    </Select>
 
-                  <Button sx={{ backgroundColor: "red", color: "white", "&:hover": { backgroundColor: "darkred" } }}
-                    className="remove-item-button"
-                    onClick={() => handleRemoveFromCart(item.id)}
-                  >
-                    Remover
-                  </Button>
-                </div>
-              </Box>
-            ))
-          )}
-
-          {errorMessage && (
-            <Typography className="error-message" color="error" sx={{ mt: 2 }}>
-              {errorMessage}
-            </Typography>
-          )}
-
-          {successMessage && (
-            <Typography className="success-message" color="success" sx={{ mt: 2 }}>
-              {successMessage}
-            </Typography>
-          )}
-
-          {cart.length > 0 && (
-            <CustomButton className="finalize-order-button" onClick={handleFinalizeOrder}>
-              Finalizar Pedido
-            </CustomButton>
-          )}
-        </Box>
-
-        <Box className="order-history">
-          <h2>Seus Pedidos</h2>
-          {orders.length === 0 ? (
-            <Typography variant="body1">Você ainda não fez nenhum pedido.</Typography>
-          ) : (
-            orders.map((order, index) => (
-              <Box key={index} className="order-card">
-                <Typography>
-                  <strong>Pedido #{order.id}</strong> - Status: {order.status} - Total: R$ {order.totalAmount.toFixed(2)}
-                </Typography>
-                <Box className="order-items">
-                  {order.OrderItems.map((item, i) => (
-                    <Typography key={i}>
-                      {item.Product.name} - {item.quantity}x - R$ {item.price.toFixed(2)}
-                    </Typography>
-                  ))}
+                    <Button sx={{ backgroundColor: "red", color: "white", "&:hover": { backgroundColor: "darkred" } }}
+                      className="remove-item-button"
+                      onClick={() => handleRemoveFromCart(item.id)}
+                    >
+                      Remover
+                    </Button>
+                  </div>
                 </Box>
-              </Box>
-            ))
-          )}
+              ))
+            )}
+
+            {errorMessage && (
+              <Typography className="error-message" color="error" sx={{ mt: 2 }}>
+                {errorMessage}
+              </Typography>
+            )}
+
+            {successMessage && (
+              <Typography className="success-message" color="success" sx={{ mt: 2 }}>
+                {successMessage}
+              </Typography>
+            )}
+
+            {cart.length > 0 && (
+              <CustomButton className="finalize-order-button" onClick={handleFinalizeOrder}>
+                Finalizar Pedido
+              </CustomButton>
+            )}
+          </Box>
+
+          <Box className="order-history">
+            <h2>Seus Pedidos</h2>
+            {orders.length === 0 ? (
+              <Typography variant="body1">Você ainda não fez nenhum pedido.</Typography>
+            ) : (
+              orders.map((order) => (
+                <Box key={order.id} className="order-card">
+                  <Typography>
+                    <strong>Pedido #{order.id}</strong> - Status: {order.status} - Total: R$ {order.totalAmount.toFixed(2)}
+                  </Typography>
+                  <Box className="order-items">
+                    {order.OrderItems?.map((item) => (
+                      <Typography key={item.id}>
+                        {item.Product ? `${item.Product.name} - ${item.quantity}x - R$ ${item.price.toFixed(2)}` : "Produto não encontrado"}
+                      </Typography>
+                    ))}
+                  </Box>
+                </Box>
+              ))
+            )}
+          </Box>
         </Box>
-      </Box>
+      </div>
     </div>
   );
 };

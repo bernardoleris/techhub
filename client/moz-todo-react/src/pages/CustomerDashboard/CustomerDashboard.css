@@ -7,9 +7,11 @@
 .customer-all-dashboard{
     height: 100vh;
     display: flex;
-    justify-content: center;
-    align-items: center;
     text-align: center;
+}
+
+.customer-dashboard-wrapper{
+    width: 100%;
 }
 
 .customer-header {

@@ -48,7 +48,7 @@ export const createOrder = async (req, res) => {
     }
 
     console.log("Criando pedido no banco..."); 
-    const order = await Order.create({ userId, totalAmount }, { transaction });
+    const order = await Order.create({ userId, totalAmount, status: "concluído" }, { transaction });
     console.log("Pedido criado com sucesso, ID:", order.id);
 
     for (const item of orderItems) {
@@ -59,7 +59,7 @@ export const createOrder = async (req, res) => {
     await transaction.commit(); 
     console.log("Pedido finalizado com sucesso!"); 
 
-    res.status(201).json({ message: "Pedido criado com sucesso!", order });
+    res.status(201).json({ message: "Pedido concluído com sucesso!", order });
 
   } catch (error) {
     await transaction.rollback();
@@ -67,7 +67,6 @@ export const createOrder = async (req, res) => {
     res.status(500).json({ message: "Erro ao criar pedido", error: error.message });
   }
 };
-
 
 export const getOrdersByUser = async (req, res) => {
   try {

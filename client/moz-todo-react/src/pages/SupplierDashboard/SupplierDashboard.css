@@ -1,0 +1,69 @@
+.supplier-dashboard-container {
+    width: 80%;
+    margin: auto;
+    text-align: center;
+    margin-top: 0px;
+}
+
+.supplier-all-dashboard{
+    height: 100vh;
+    display: flex;
+    text-align: center;
+}
+  
+.supplier-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+  
+.supplier-logo {
+    font-size: 24px;
+    font-weight: bold;
+}
+  
+.logout-button {
+    background-color: red;
+    color: white;
+}
+  
+.logout-button:hover {
+    background-color: darkred;
+}
+  
+.add-product-button {
+    margin-top: 16px;
+}
+  
+.product-table {
+    margin-top: 16px;
+}
+  
+.input-field {
+    margin-bottom: 16px;
+}
+  
+.cancel-button {
+    background-color: red;
+    color: white;
+}
+  
+.cancel-button:hover {
+    background-color: darkred;
+}
+  
+.submit-button {
+    background-color: green;
+    color: white;
+}
+  
+.submit-button:hover {
+    background-color: darkgreen;
+}
+
+.add-product-text{
+    padding: 10px;
+    font-size: 24px;
+    font-weight: bold;
+}
