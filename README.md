@@ -1,7 +1,3 @@
-Here's a **README.md** file for your project:  
-
----
-
 # 🛒 TechHub - E-commerce System  
 
 TechHub is an e-commerce system built with **React (frontend)** and **Express (backend)**, allowing customers to place orders and suppliers to manage their products.  
@@ -97,7 +93,3 @@ Your **frontend** will be available at `http://localhost:3000/`
 - Add payment integration  
 - Implement product reviews and ratings  
 - Improve UI design and responsiveness  
-
----
-
-This **README** provides a clear overview of the project, installation steps, API endpoints, and possible future improvements. Let me know if you need any modifications! 🚀
