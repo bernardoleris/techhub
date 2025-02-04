@@ -43,9 +43,9 @@
   font-weight: 1000;
   text-align: center;
   font-style: italic;
-  margin-bottom: 5px; /* Espaço geral abaixo do texto */
-  border-bottom: 4px solid #007bff; /* Traçado azul */
-  display: inline-block; /* Traço acompanha o texto */
+  margin-bottom: 5px;
+  border-bottom: 4px solid #007bff; 
+  display: inline-block; 
   margin-bottom: 20px;
 }
 
@@ -67,7 +67,7 @@
 }
 
 .login-link a:hover {
-  text-decoration: underline; /* Adiciona sublinhado apenas ao passar o mouse */
+  text-decoration: underline; 
 }
 
 
