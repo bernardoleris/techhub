@@ -27,6 +27,21 @@ TechHub is an e-commerce system built with **React (frontend)** and **Express (b
 - Delete or deactivate products  
 - View all products  
 
+### Register Page:
+<img src="./project-images/register-page.png">
+
+### Login Page:
+<img src="./project-images/login-page.png">
+
+### Customer Page:
+<img src="./project-images/customer-page.png">
+
+### Supplier Page:
+<img src="./project-images/supplier-page.png">
+
+### Supplier Edit Page:
+<img src="./project-images/supplier-page2.png">
+
 ## 🛠️ Installation and Setup  
 
 ### **1️⃣ Clone the Repository**  
